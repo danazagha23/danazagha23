@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shop_app/components/custom_surfix_icon.dart';
 import 'package:shop_app/components/default_button.dart';
 import 'package:shop_app/components/form_error.dart';
 import 'package:shop_app/components/no_account_text.dart';
 import 'package:shop_app/size_config.dart';
 
+import '../../../config.dart';
 import '../../../constants.dart';
+import 'package:http/http.dart' as http;
+
+TextEditingController _useremailcontroller = TextEditingController();
 
 class Body extends StatelessWidget {
   @override
@@ -72,6 +77,7 @@ class _ForgotPassFormState extends State<ForgotPassForm> {
               }
               return null;
             },
+            controller: _useremailcontroller,
             validator: (value) {
               if (value.isEmpty && !errors.contains(kEmailNullError)) {
                 setState(() {
@@ -102,6 +108,7 @@ class _ForgotPassFormState extends State<ForgotPassForm> {
             press: () {
               if (_formKey.currentState.validate()) {
                 // Do what you want to do
+                _resetPassword(_useremailcontroller.text.toString());
               }
             },
           ),
@@ -111,4 +118,32 @@ class _ForgotPassFormState extends State<ForgotPassForm> {
       ),
     );
   }
+  void _resetPassword(String emailreset) {
+    http.post(
+        Uri.parse(CONFIG.LOGIN),
+        body: {"email": emailreset}).then((response) {
+      print(response.body);
+      if (response.body == "success") {
+        Fluttertoast.showToast(
+            msg:
+            "Password reset completed. Please check your email for further instruction",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.TOP,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Color.fromRGBO(191, 30, 46, 50),
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else {
+        Fluttertoast.showToast(
+            msg: "Password reset failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.TOP,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Color.fromRGBO(191, 30, 46, 50),
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    });
+  }
+
 }

@@ -1,9 +1,9 @@
 class Customer {
-  String name, email, password, address, phone;
+  String cust_name, cust_email, cust_password, cust_address, cust_phone;
   Customer(
-      { this.name,
-        this.email,
-        this.password,
-        this.address,
-        this.phone});
+      { this.cust_name,
+        this.cust_email,
+        this.cust_password,
+        this.cust_address,
+        this.cust_phone});
 }

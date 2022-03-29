@@ -1,4 +1,5 @@
 class CONFIG {
-  //static final String SERVER = "https://slumberjer.com";
- static final String SERVER = "http://192.168.1.181";
+  //192.168.1.181   127.0.0.1
+ static final String REGISTER =   "http://127.0.0.1/glam/register_client.php";
+ static final String LOGIN =   "http://127.0.0.1/glam/login_client.php";
 }

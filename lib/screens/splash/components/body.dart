@@ -16,12 +16,12 @@ class _BodyState extends State<Body> {
   int currentPage = 0;
   List<Map<String, String>> splashData = [
     {
-      "text": "Welcome to Tokoto, Let’s shop!",
+      "text": "Welcome to G L A M, Let’s shop!",
       "image": "assets/images/splash_1.png"
     },
     {
       "text":
-          "We help people conect with store \naround United State of America",
+          "We help people conect with store \naround Palestine",
       "image": "assets/images/splash_2.png"
     },
     {
@@ -91,7 +91,7 @@ class _BodyState extends State<Body> {
       height: 6,
       width: currentPage == index ? 20 : 6,
       decoration: BoxDecoration(
-        color: currentPage == index ? kPrimaryColor : Color(0xFFD8D8D8),
+        color: currentPage == index ? Colors.pinkAccent : Color(0xFFD8D8D8),
         borderRadius: BorderRadius.circular(3),
       ),
     );

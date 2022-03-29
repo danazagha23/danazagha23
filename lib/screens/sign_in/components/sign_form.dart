@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shop_app/components/custom_surfix_icon.dart';
 import 'package:shop_app/components/form_error.dart';
+import 'package:shop_app/model/customer.dart';
 import 'package:shop_app/screens/forgot_password/forgot_password_screen.dart';
 import 'package:shop_app/screens/login_success/login_success_screen.dart';
+import 'package:shop_app/screens/sign_up/sign_up_screen.dart';
 
 import '../../../components/default_button.dart';
+import '../../../config.dart';
 import '../../../constants.dart';
 import '../../../size_config.dart';
+import 'package:http/http.dart' as http;
+
+ProgressDialog pr;
+TextEditingController _emailController = TextEditingController();
+TextEditingController _passwordController = TextEditingController();
 
 class SignForm extends StatefulWidget {
   @override
@@ -63,6 +73,7 @@ class _SignFormState extends State<SignForm> {
                 child: Text(
                   "Forgot Password",
                   style: TextStyle(decoration: TextDecoration.underline),
+
                 ),
               )
             ],
@@ -73,9 +84,10 @@ class _SignFormState extends State<SignForm> {
             text: "Continue",
             press: () {
               if (_formKey.currentState.validate()) {
+                _onLog();
                 _formKey.currentState.save();
                 // if all are valid then go to success screen
-                Navigator.pushNamed(context, LoginSuccessScreen.routeName);
+                // Navigator.pushNamed(context, LoginSuccessScreen.routeName);
               }
             },
           ),
@@ -106,6 +118,7 @@ class _SignFormState extends State<SignForm> {
         }
         return null;
       },
+      controller: _passwordController,
       decoration: InputDecoration(
         labelText: "Password",
         hintText: "Enter your password",
@@ -139,6 +152,7 @@ class _SignFormState extends State<SignForm> {
         }
         return null;
       },
+      controller: _emailController,
       decoration: InputDecoration(
         labelText: "Email",
         hintText: "Enter your email",
@@ -149,4 +163,61 @@ class _SignFormState extends State<SignForm> {
       ),
     );
   }
+
+
+  void _onLog() {
+    String _email = _emailController.text.toString();
+    String _password = _passwordController.text.toString();
+
+    _onLogin(_email,_password);
+  }
+
+  Future<void> _onLogin(String email,String password) async {
+    pr = ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: true, showLogs: true);
+    await pr.show();
+
+    var res = await http.post(Uri.parse(CONFIG.LOGIN),
+        body: {
+          "email": email,
+          "password": password
+      });
+
+      if (res.toString() == "failed") {
+        Navigator.pushNamed(context, SignUpScreen.routeName);
+        Fluttertoast.showToast(
+            msg: "Login Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.TOP,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        pr.hide().then((isHidden) {
+          print(isHidden);
+        });
+      } else {
+        Fluttertoast.showToast(
+            msg: "Login Success",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.TOP,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        List userdata = res.body.split(",");
+        Customer cust = Customer(
+            cust_email: email,
+            cust_password: password);
+        pr.hide().then((isHidden) {
+          print(isHidden);
+        });
+
+        Navigator.pushNamed(context, LoginSuccessScreen.routeName);
+            // MaterialPageRoute(builder: (content) => MainScreen(Customer: cust)));
+      }
+
+  }
+
 }
+
